@@ -1,0 +1,82 @@
+<header class="site-nav">
+  <div class="container site-nav__inner">
+    <a class="site-nav__brand" href="/">покодим<span class="site-nav__tld">.рф</span></a>
+    <div class="site-nav__socials" aria-label="Социальные каналы">
+      <span title="YouTube — скоро"><img src="/assets/social-youtube.svg" alt="YouTube" /></span>
+      <span title="Telegram — скоро"><img src="/assets/social-telegram.svg" alt="Telegram" /></span>
+      <span title="Instagram — скоро"><img src="/assets/social-instagram.svg" alt="Instagram" /></span>
+    </div>
+    <nav class="site-nav__links" aria-label="Основная навигация">
+      <a href="/">Главная</a>
+      <a href="/materials/">Каталог</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid var(--grid-line);
+    background: #090d14ed;
+    backdrop-filter: blur(14px);
+  }
+
+  .site-nav__inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 58px;
+    border-inline: 1px solid var(--grid-line);
+    padding-block: 0;
+  }
+
+  .site-nav__brand {
+    font-weight: 700;
+    font-size: 1.16rem;
+    color: var(--text);
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+  }
+
+  .site-nav__socials { position: absolute; left: 50%; display: flex; height: 58px; border-left: 1px solid var(--grid-line); transform: translateX(-50%); }
+  .site-nav__socials span { position: relative; display: grid; width: 58px; place-items: center; border-right: 1px solid var(--grid-line); background: #0b1018; }
+  .site-nav__socials span::after { position: absolute; inset: auto 10px 0; height: 1px; background: var(--accent); content: ''; opacity: 0; transition: opacity var(--transition); }
+  .site-nav__socials span:hover::after { opacity: 1; }
+  .site-nav__socials img { width: 20px; height: 20px; filter: invert(86%) sepia(8%) saturate(276%); opacity: .72; }
+
+  .site-nav__tld {
+    color: var(--accent);
+  }
+
+  .site-nav__links {
+    display: flex;
+    align-self: stretch;
+  }
+
+  .site-nav__links a {
+    display: grid;
+    min-width: 106px;
+    padding: 0 18px;
+    place-items: center;
+    border-left: 1px solid var(--grid-line);
+    color: var(--text-muted);
+    font-size: 0.87rem;
+    transition: color var(--transition), border-color var(--transition), background var(--transition);
+  }
+
+  .site-nav__links a:hover {
+    background: #132019;
+    color: var(--text);
+  }
+
+  @media (max-width: 420px) {
+    .site-nav__inner { gap: 8px; }
+    .site-nav__links { gap: 0; }
+    .site-nav__links a { min-width: 68px; padding-inline: 8px; font-size: 0.8rem; }
+  }
+  @media (max-width: 820px) { .site-nav__socials { display: none; } }
+</style>

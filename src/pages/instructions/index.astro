@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { fetchPublishedInstructions, mediaUrl } from '../../lib/cms';
+
+const instructions = await fetchPublishedInstructions();
+---
+
+<BaseLayout
+  title="Инструкции — покодим.рф"
+  description="Опубликованные инструкции покодим.рф: готовые наборы предпочтений и правил для работы с AI-агентами."
+>
+  <div class="container instructions">
+    <header class="instructions-heading">
+      <p>БАЗА ЗНАНИЙ / ИНСТРУКЦИИ</p>
+      <h1>Инструкции</h1>
+    </header>
+    {instructions.length === 0 && <p class="instructions-empty">Инструкций пока нет.</p>}
+    <div class="cards">
+      {instructions.map((item) => {
+        const memory = mediaUrl(item.values.memory_json);
+        const cover = mediaUrl(item.values.cover);
+        return (
+          <article class="card instruction-card">
+            {cover && (
+              <div class="instruction-card__media">
+                <img class="instruction-card__image" src={cover} alt="" loading="lazy" />
+              </div>
+            )}
+            <h2 class="card__title"><a href={`/instructions/${item.slug}/`}>{item.title}</a></h2>
+            {item.values.short_description && <p class="card__desc">{item.values.short_description}</p>}
+            <div class="card__meta">
+              {item.values.category && <span class="tag tag--tool">{item.values.category}</span>}
+            </div>
+            <div class="instruction-card__actions">
+              {memory && <a class="instruction-button" href={memory} download>Скачать JSON</a>}
+              <a class="instruction-link" href={`/instructions/${item.slug}/`}>Подробнее ↗</a>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  @import '../../styles/instructions.css';
+
+  .instructions { border-inline: 1px solid var(--grid-line); padding-inline: 0; background: #090d14c4; }
+  .instructions-heading { padding: clamp(44px, 6vw, 88px); border-bottom: 1px solid var(--grid-line); }
+  .instructions-heading > p { margin: 0 0 16px; color: var(--accent); font: 700 .72rem ui-monospace, monospace; letter-spacing: .14em; }
+  .instructions-heading h1 { margin: 0; font-size: clamp(3rem, 5vw, 5.4rem); line-height: .98; }
+  .instructions-empty { padding: 40px clamp(24px, 4vw, 56px); color: var(--text-muted); }
+  .instruction-card { display: flex; flex-direction: column; gap: 10px; }
+  .instruction-card__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: auto; padding-top: 10px; }
+  @media (max-width: 640px) {
+    .instructions { border-inline: 0; }
+    .instructions-heading { padding: 40px 16px; }
+    .instructions-heading h1 { font-size: clamp(2.7rem, 13vw, 4rem); }
+    .instructions-empty { padding: 32px 16px; }
+  }
+</style>
+
+<script>
+  import '../../scripts/instruction-art';
+</script>

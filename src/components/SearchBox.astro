@@ -1,0 +1,55 @@
+<div class="search">
+  <input
+    type="search"
+    class="search__input"
+    data-search-input
+    placeholder="Поиск по материалам"
+    aria-label="Поиск по материалам"
+  />
+  <p class="search__empty" data-empty-message hidden>Ничего не найдено</p>
+</div>
+
+<script>
+  import { applyCatalogFilters } from '../lib/catalog-client';
+
+  document
+    .querySelector<HTMLInputElement>('[data-search-input]')
+    ?.addEventListener('input', applyCatalogFilters);
+</script>
+
+<style>
+  .search {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search__input {
+    width: 100%;
+    max-width: none;
+    padding: 12px 16px;
+    border: 1px solid #303a49;
+    border-radius: 2px;
+    background: #0b1018;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color var(--transition), background var(--transition);
+  }
+
+  .search__input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .search__input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #121a24;
+  }
+
+  .search__empty {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+</style>

@@ -1,0 +1,100 @@
+---
+import type { Post } from '../lib/cms';
+import { cardDescription, formatDate, LEVELS } from '../lib/catalog';
+
+interface Props {
+  post: Post;
+  toolName: string;
+}
+
+const { post, toolName } = Astro.props;
+const description = cardDescription(post);
+const level = post.tags.find((tag) => LEVELS.includes(tag)) ?? post.tags[0] ?? '';
+const toolSlug = post.path.split('/')[2] ?? '';
+const date = post.published_at ? formatDate(post.published_at) : '';
+const search = `${post.title} ${description}`.toLowerCase();
+---
+
+<article class="card" data-material-card data-tool={toolSlug} data-level={level} data-search={search}>
+  <h3 class="card__title">
+    <a href={`/materials/${post.slug}/`}>{post.title}</a>
+  </h3>
+  <p class="card__desc">{description}</p>
+  <div class="card__meta">
+    <span class="tag tag--tool">{toolName}</span>
+    {level && <span class="tag">{level}</span>}
+    {date && <time datetime={post.published_at!}>{date}</time>}
+  </div>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    min-height: 218px;
+    background: #0d121ac7;
+    border: 0;
+    border-right: 1px solid var(--grid-line);
+    border-bottom: 1px solid var(--grid-line);
+    border-radius: 0;
+    padding: 26px;
+    transition: background var(--transition), box-shadow var(--transition);
+  }
+
+  .card:hover {
+    background: #111a23eb;
+    box-shadow: inset 0 0 54px #53e0a108;
+  }
+
+  .card[hidden] {
+    display: none;
+  }
+
+  .card__title {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+
+  .card__title a {
+    color: var(--text);
+    transition: color var(--transition);
+  }
+
+  .card__title a:hover {
+    color: var(--accent);
+  }
+
+  .card__desc {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    flex: 1;
+  }
+
+  .card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .tag {
+    padding: 3px 10px;
+    border: 1px solid #303a49;
+    border-radius: 2px;
+    background: #111722;
+    color: var(--text-muted);
+  }
+
+  .tag--tool {
+    color: var(--accent);
+    border-color: #34785d;
+    background: #13251e;
+  }
+</style>

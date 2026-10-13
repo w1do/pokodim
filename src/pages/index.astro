@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MaterialCard from '../components/MaterialCard.astro';
+import '../styles/home-hero.css';
+import '../styles/home-sections.css';
+import { fetchPosts, fetchCategories } from '../lib/cms';
+import { flattenCategories, pickFeatured, toolForPost } from '../lib/catalog';
+
+const posts = await fetchPosts();
+const tools = flattenCategories(await fetchCategories());
+const fresh = pickFeatured(posts, 4);
+const sections = [
+  { id: 'instructions', title: 'Инструкции', text: 'Пошаговые инструкции по AI-инструментам: Claude Code, Cursor, Junie и другие.', mark: '01', theme: 'green', image: '/assets/direction-instructions.svg' },
+  { id: 'reviews', title: 'Обзоры локальных моделей', text: 'Тесты и настройка локальных моделей на своём железе: Ollama, квантизация, контекст.', mark: '02', theme: 'violet', image: '/assets/direction-reviews.svg' },
+  { id: 'collections', title: 'Подборки сервисов', text: 'Подборки дешёвых и бесплатных AI-сервисов, готовые конфигурации и промпты.', mark: '03', theme: 'blue', image: '/assets/direction-collections.svg' },
+];
+---
+
+<BaseLayout title="покодим.рф — Vibe Coding, локальные AI-модели и работа с AI-агентами">
+  <section class="hero">
+    <div class="container hero__layout">
+      <div class="hero__copy">
+        <p class="hero__eyebrow"><span></span> Практическая база знаний об AI</p>
+        <h1>ВайбКодинг, обзоры, инструкции</h1>
+        <p class="hero__lead">
+          Каталог материалов, инструкции по AI-инструментам, обзоры локальных моделей,
+          подборки дешёвых и бесплатных AI-сервисов, готовые конфигурации и промпты,
+          практические сценарии.
+        </p>
+        <a class="hero__cta" href="/materials/">Каталог материалов <span aria-hidden="true">↗</span></a>
+        <p class="hero__note">Инструменты · локальные модели · AI-агенты</p>
+      </div>
+      <figure class="hero__art">
+        <div class="hero__art-glow"></div>
+        <img src="/assets/ai-and-automation.svg" alt="Иллюстрация AI и автоматизации" />
+        <figcaption><span>AI × CODE</span><span>Практика без хаоса</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <nav class="sections-nav" aria-label="Разделы сайта">
+    <div class="container sections-nav__inner">
+      <a href="/materials/">Каталог материалов <span>↗</span></a>
+      <a href="/instructions/">Инструкции</a>
+      <a href="/#reviews">Обзоры локальных моделей</a>
+      <a href="/#collections">Подборки сервисов</a>
+    </div>
+  </nav>
+
+  {sections.map((section, index) => (
+    <section id={section.id} class={`band band--${index} direction direction--${section.theme}`}>
+      <div class="container direction__card">
+        <div class="direction__visual" aria-hidden="true"><span>{section.mark}</span><img src={section.image} alt="" loading="lazy" /><i></i></div>
+        <div class="direction__copy"><p class="band__index">НАПРАВЛЕНИЕ / {section.mark}</p>
+          <h2>{section.title}</h2><p>{section.text}</p>
+          <a href="/materials/">Смотреть материалы <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="opensource-band" aria-labelledby="opensource-title">
+    <div class="container opensource">
+      <header class="opensource__heading">
+        <div><p class="band__index">OPEN SOURCE / TOOLKIT</p><h2 id="opensource-title">Открытые инструменты для AI</h2><p>Проекты, которые можно изучать, запускать и развивать самостоятельно.</p></div>
+        <div class="opensource__controls"><button type="button" data-slide="prev" aria-label="Предыдущие проекты">←</button><button type="button" data-slide="next" aria-label="Следующие проекты">→</button></div>
+      </header>
+      <div class="opensource__track" data-opensource-track tabindex="0" aria-label="Карусель Open Source проектов">
+        <article class="opensource-card"><div class="opensource-card__art"><span>01 / LOCAL</span><img src="/assets/opensource-ollama.svg" alt="" loading="lazy" /></div><div class="opensource-card__copy"><span>MIT · AI RUNTIME</span><h3>Ollama</h3><p>Запускайте языковые модели локально и подключайте их к приложениям и агентам.</p><a href="https://github.com/ollama/ollama" target="_blank" rel="noreferrer">Подробнее <span aria-hidden="true">↗</span></a></div></article>
+        <article class="opensource-card"><div class="opensource-card__art opensource-card__art--violet"><span>02 / CODE</span><img src="/assets/opensource-continue.svg" alt="" loading="lazy" /></div><div class="opensource-card__copy"><span>APACHE-2.0 · CODING</span><h3>Continue</h3><p>Открытый AI coding agent для работы с кодом и задачами разработки.</p><a href="https://github.com/continuedev/continue" target="_blank" rel="noreferrer">Подробнее <span aria-hidden="true">↗</span></a></div></article>
+        <article class="opensource-card"><div class="opensource-card__art opensource-card__art--blue"><span>03 / AGENTS</span><img src="/assets/opensource-open-hands.svg" alt="" loading="lazy" /></div><div class="opensource-card__copy"><span>MIT · SOFTWARE AGENT</span><h3>OpenHands</h3><p>Открытая платформа AI-агентов для задач разработки программного обеспечения.</p><a href="https://github.com/OpenHands/OpenHands" target="_blank" rel="noreferrer">Подробнее <span aria-hidden="true">↗</span></a></div></article>
+        <article class="opensource-card"><div class="opensource-card__art opensource-card__art--green"><span>04 / WORKFLOWS</span><img src="/assets/app-development.svg" alt="" loading="lazy" /></div><div class="opensource-card__copy"><span>MIT · AI WORKFLOWS</span><h3>Langflow</h3><p>Визуальный конструктор AI-агентов и рабочих процессов с доступом к API.</p><a href="https://github.com/langflow-ai/langflow" target="_blank" rel="noreferrer">Подробнее <span aria-hidden="true">↗</span></a></div></article>
+      </div>
+      <div class="opensource__progress"><span></span></div>
+    </div>
+  </section>
+
+  <section id="fresh" class="band band--fresh">
+    <div class="container">
+      <div class="fresh-heading"><div><p class="band__index">ПОСЛЕДНЕЕ / ИЗ БАЗЫ ЗНАНИЙ</p><h2>Свежие материалы</h2></div><span class="fresh-heading__line" aria-hidden="true"></span></div>
+      <div class="cards">
+        {fresh.map((post) => (
+          <MaterialCard post={post} toolName={toolForPost(post, tools)?.name ?? 'AI'} />
+        ))}
+      </div>
+      <a class="more" href="/materials/">Все материалы <span>→</span></a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const track = document.querySelector<HTMLElement>('[data-opensource-track]');
+  const controls = document.querySelectorAll<HTMLButtonElement>('[data-slide]');
+  const progress = document.querySelector<HTMLElement>('.opensource__progress span');
+  const updateSlider = () => {
+    if (!track) return;
+    controls.forEach((button) => { button.disabled = button.dataset.slide === 'prev' ? track.scrollLeft < 2 : track.scrollLeft + track.clientWidth >= track.scrollWidth - 2; });
+    if (progress) progress.style.transform = `scaleX(${Math.max(.12, track.scrollLeft / Math.max(1, track.scrollWidth - track.clientWidth))})`;
+  };
+  controls.forEach((button) => button.addEventListener('click', () => track?.scrollBy({ left: (button.dataset.slide === 'next' ? 1 : -1) * (track.clientWidth * 0.78), behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })));
+  track?.addEventListener('scroll', updateSlider, { passive: true });
+  updateSlider();
+</script>

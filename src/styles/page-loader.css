@@ -1,0 +1,195 @@
+.page-loader {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--bg);
+  transition: opacity 0.4s ease;
+}
+
+html.js .page-loader {
+  display: flex;
+}
+
+.page-loader.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Вход: плавное появление ракеты за 0.6s */
+.page-loader__rig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: min(100%, 200px);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  animation: page-loader-enter 0.6s ease-out both;
+}
+
+/* Покачивание вверх-вниз, период 2.4s */
+.page-loader__float {
+  display: block;
+  width: 100%;
+  margin: 0;
+  animation: page-loader-float 2.4s ease-in-out 0.6s infinite;
+}
+
+/* Лёгкий наклон и пульсация свечения, другие периоды */
+.page-loader__art {
+  display: block;
+  width: min(100%, 200px);
+  height: auto;
+  transform-origin: 50% 80%;
+  /* Тёмные контуры инвертируются в светлые, жёлтый акцент сохраняет тёплый тон */
+  filter: invert(1) hue-rotate(180deg) drop-shadow(0 0 6px rgba(245, 204, 68, 0.35));
+  animation:
+    page-loader-tilt 3.1s ease-in-out 0.6s infinite,
+    page-loader-glow 1.8s ease-in-out 0.6s infinite;
+}
+
+.page-loader__text {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  color: var(--text-muted);
+  font: 500 0.8rem/1.4 ui-monospace, monospace;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+/* Точки висят справа от слова, не сдвигая центр подписи. Появляются по очереди, цикл 1.2s */
+.page-loader__word {
+  position: relative;
+  display: inline-block;
+}
+
+.page-loader__dots {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  white-space: nowrap;
+}
+
+.page-loader__dot {
+  animation: 1.2s linear infinite both;
+}
+
+.page-loader__dot--1 {
+  animation-name: page-loader-dot-1;
+}
+
+.page-loader__dot--2 {
+  animation-name: page-loader-dot-2;
+}
+
+.page-loader__dot--3 {
+  animation-name: page-loader-dot-3;
+}
+
+@keyframes page-loader-dot-1 {
+  0%,
+  24.9% {
+    opacity: 0;
+  }
+  25%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes page-loader-dot-2 {
+  0%,
+  49.9% {
+    opacity: 0;
+  }
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes page-loader-dot-3 {
+  0%,
+  74.9% {
+    opacity: 0;
+  }
+  75%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes page-loader-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes page-loader-float {
+  0%,
+  100% {
+    transform: translateY(-10px);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+@keyframes page-loader-tilt {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes page-loader-glow {
+  0%,
+  100% {
+    filter: invert(1) hue-rotate(180deg) drop-shadow(0 0 4px rgba(245, 204, 68, 0.25));
+  }
+  50% {
+    filter: invert(1) hue-rotate(180deg) drop-shadow(0 0 18px rgba(245, 204, 68, 0.6));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-loader__rig,
+  .page-loader__float,
+  .page-loader__art {
+    animation: none;
+  }
+
+  .page-loader__dot {
+    animation: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .page-loader__rig {
+    width: min(100%, 160px);
+  }
+
+  .page-loader__art {
+    width: min(100%, 160px);
+  }
+}

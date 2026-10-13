@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { fetchPosts, fetchCategories } from '../../lib/cms';
+import { flattenCategories, formatDate, LEVELS, toolForPost } from '../../lib/catalog';
+import { renderMarkdown } from '../../lib/markdown';
+import type { Post } from '../../lib/cms';
+
+export async function getStaticPaths() {
+  const posts = await fetchPosts();
+  const categories = await fetchCategories();
+  const tools = flattenCategories(categories);
+
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: {
+      post,
+      toolName: toolForPost(post, tools)?.name ?? 'AI',
+      relatedPosts: posts
+        .filter((candidate) => candidate.id !== post.id)
+        .sort((a, b) => Number(b.primary_category_id === post.primary_category_id) - Number(a.primary_category_id === post.primary_category_id))
+        .slice(0, 4),
+    },
+  }));
+}
+
+interface Props {
+  post: Post;
+  toolName: string;
+  relatedPosts: Post[];
+}
+
+const { post, toolName, relatedPosts } = Astro.props;
+const channels = [
+  ['YouTube', 'Видео и разборы', '/assets/social-youtube.svg'],
+  ['Telegram', 'Новости и заметки', '/assets/social-telegram.svg'],
+  ['Instagram', 'Короткие форматы', '/assets/social-instagram.svg'],
+];
+const level = post.tags.find((tag) => LEVELS.includes(tag)) ?? post.tags[0] ?? '';
+const html = renderMarkdown(post.body);
+const date = post.published_at ? formatDate(post.published_at) : '';
+const seoTitle = post.seo?.title || post.title;
+const seoDescription = post.seo?.description || '';
+---
+
+<BaseLayout title={seoTitle} description={seoDescription}>
+  <div class="material-shell">
+    <div class="container material-shell__inner">
+    <article class="material">
+    <header class="material__head">
+      <div class="material__head-copy">
+      <div class="material__meta">
+        <span class="tag tag--tool">{toolName}</span>
+        {level && <span class="tag">{level}</span>}
+        {date && <time datetime={post.published_at!}>{date}</time>}
+      </div>
+      <h1>{post.title}</h1>
+      </div>
+      <div class="material__signal" aria-hidden="true"><span>ARTICLE / AI</span><img src="/assets/ai-and-automation.svg" alt="" /><i>READ / APPLY</i></div>
+    </header>
+    <div class="material__body-wrap">
+      <aside class="material-sidebar material-sidebar--channels" aria-label="Каналы и реклама">
+        <div class="material-sidebar__sticky">
+          <p class="material-sidebar__label">КАНАЛЫ / FOLLOW</p>
+          <div class="channel-list">{channels.map(([name, note, icon]) => <div class="channel"><span class="channel__icon"><img src={icon} alt="" /></span><div><strong>{name}</strong><small>{note}</small></div><i>СКОРО</i></div>)}</div>
+          <p class="material-sidebar__label material-sidebar__label--ads">РЕКЛАМА</p>
+          <div class="ad-slot"><span>AD / 01</span><strong>Место для AI-сервиса</strong><small>Нативный блок в материале</small></div>
+          <div class="ad-slot"><span>AD / 02</span><strong>Ваш продукт здесь</strong><small>Для полезных инструментов</small></div>
+        </div>
+      </aside>
+      <div class="material__body" set:html={html} />
+      <aside class="material-sidebar material-sidebar--related" aria-label="Полезные материалы">
+        <div class="material-sidebar__sticky">
+          <p class="material-sidebar__label">ПОЛЕЗНЫЕ МАТЕРИАЛЫ</p>
+          <div class="related-list">{relatedPosts.map((item, index) => <a href={`/materials/${item.slug}/`}><img src={item.cover || '/assets/direction-collections.svg'} alt="" loading="lazy" /><span>0{index + 1}</span><strong>{item.title}</strong><i>ЧИТАТЬ ↗</i></a>)}</div>
+        </div>
+      </aside>
+    </div>
+    <a class="material__back" href="/materials/">← Каталог материалов</a>
+    </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>@import '../../styles/material-page.css';</style>

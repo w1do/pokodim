@@ -1,0 +1,24 @@
+:root { font-synthesis: none; text-rendering: optimizeLegibility; }
+::selection { color: var(--accent-contrast); background: var(--accent); }
+main { min-height: 72vh; }
+.site-footer { margin-top: 0; border-top: 1px solid var(--grid-line); padding: 26px 0 42px; color: var(--text-muted); font-size: .88rem; background: #090c12e8; }
+.band h2, .catalog-heading h1, .material h1, .not-found h1 { letter-spacing: -.045em; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 0; border-top: 1px solid var(--grid-line); border-left: 1px solid var(--grid-line); }
+.card { position: relative; min-height: 236px; padding: 26px; border: 0; border-right: 1px solid var(--grid-line); border-bottom: 1px solid var(--grid-line); border-radius: 0; background: #0d121ac7; transition: background var(--transition), box-shadow var(--transition); }
+.card::before { position: absolute; inset: 0 auto auto 0; width: 0; height: 2px; background: var(--accent); content: ''; transition: width var(--transition); }
+.card:hover { transform: none; background: #111a23eb; box-shadow: inset 0 0 54px #53e0a108; }
+.card:hover::before { width: 100%; opacity: 1; }
+.card__title a { transition: color var(--transition); }
+.tag { border-color: #303a49; border-radius: 2px; background: #111722; }
+.tag--tool { color: var(--accent); border-color: #34785d; background: #10231d; }
+.chip, .reset, .search__input { transition: border-color var(--transition), background var(--transition), color var(--transition); }
+.chip { padding: 7px 14px; border-radius: 2px; background: #0d121a; }
+.chip.is-active { background: var(--accent); }
+.search__input { max-width: none; padding: 13px 16px; border-radius: 2px; background: #0b1018; }
+.material__body h2, .material__body h3 { letter-spacing: -.025em; }
+.material__body blockquote { margin: 24px 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: #111a23; color: #c9d2df; }
+.material__body a { text-decoration: underline; text-decoration-color: #428b6a; text-underline-offset: 3px; }
+.material__body img { max-width: 100%; height: auto; border-radius: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

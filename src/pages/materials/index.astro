@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MaterialCard from '../../components/MaterialCard.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import SearchBox from '../../components/SearchBox.astro';
+import { fetchPosts, fetchCategories } from '../../lib/cms';
+import { flattenCategories, toolForPost } from '../../lib/catalog';
+
+const posts = await fetchPosts();
+const tools = flattenCategories(await fetchCategories());
+---
+
+<BaseLayout
+  title="Каталог материалов — покодим.рф"
+  description="Каталог материалов о Vibe Coding, AI-инструментах, локальных моделях и AI-сервисах: инструкции, обзоры и подборки."
+>
+  <div class="container catalog">
+    <header class="catalog-heading">
+      <div class="catalog-heading__copy"><p>БАЗА ЗНАНИЙ / ПОКОДИМ</p>
+        <h1>Каталог материалов</h1>
+        <span>Инструкции, обзоры и практические сценарии по AI-разработке.</span></div>
+      <div class="catalog-heading__signal" aria-hidden="true"><span>INDEX</span><strong>01</strong><i>1440 / GRID</i></div>
+    </header>
+    <section class="catalog-controls" aria-label="Поиск и фильтры каталога">
+      <div class="catalog-controls__top"><p>ПОИСК / ФИЛЬТРАЦИЯ</p><span>ПО ТЕМЕ И ИНСТРУМЕНТУ</span></div>
+      <SearchBox />
+      <FilterBar tools={tools} />
+    </section>
+    <div class="cards">
+      {posts.map((post) => <MaterialCard post={post} toolName={toolForPost(post, tools)?.name ?? 'AI'} />)}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .catalog { border-inline: 1px solid var(--grid-line); padding-inline: 0; background: #090d14c4; }
+  .catalog-heading { position: relative; display: grid; grid-template-columns: minmax(0, 9fr) minmax(220px, 3fr); min-height: 340px; overflow: hidden; border-bottom: 1px solid var(--grid-line); }
+  .catalog-heading::before { position: absolute; inset: 0; background: url('/assets/circuit-08.svg') center / cover no-repeat; content: ''; opacity: .07; pointer-events: none; }
+  .catalog-heading__copy { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center; padding: clamp(44px, 6vw, 88px); }
+  .catalog-heading__copy > p { margin: 0 0 16px; color: var(--accent); font: 700 .72rem ui-monospace, monospace; letter-spacing: .14em; }
+  .catalog-heading h1 { max-width: 900px; margin: 0 0 12px; font-size: clamp(3rem, 5vw, 5.4rem); line-height: .98; }
+  .catalog-heading__copy > span { color: var(--text-muted); font-size: 1rem; }
+  .catalog-heading__signal { position: relative; z-index: 1; display: grid; align-content: center; justify-items: center; border-left: 1px solid var(--grid-line); background: linear-gradient(#53e0a108 1px, transparent 1px), linear-gradient(90deg, #53e0a108 1px, transparent 1px); background-size: 36px 36px; font-family: ui-monospace, monospace; }
+  .catalog-heading__signal::before { position: absolute; width: 140px; aspect-ratio: 1; border: 1px solid #53e0a13d; border-radius: 50%; box-shadow: 0 0 0 28px #53e0a108; content: ''; }
+  .catalog-heading__signal span, .catalog-heading__signal i { z-index: 1; color: #718173; font-size: .62rem; font-style: normal; letter-spacing: .15em; }
+  .catalog-heading__signal strong { z-index: 1; color: var(--accent); font-size: 4rem; line-height: 1.1; }
+  .catalog-controls { position: relative; padding: 26px clamp(24px, 4vw, 56px) 30px; border-bottom: 1px solid var(--grid-line); }
+  .catalog-controls__top { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 16px; color: #6f7c8d; font: .64rem ui-monospace, monospace; letter-spacing: .12em; }
+  .catalog-controls__top p { margin: 0; color: var(--accent); }
+  .catalog-controls :global(.search__input) { margin-bottom: 16px; }
+  .cards { grid-template-columns: repeat(3, 1fr); border: 0; border-left: 0; }
+  @media (max-width: 900px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) {
+    .catalog { border-inline: 0; }
+    .catalog-heading { grid-template-columns: 1fr; min-height: 0; }
+    .catalog-heading__copy { min-height: 330px; padding: 56px 24px; }
+    .catalog-heading__signal { min-height: 150px; border-top: 1px solid var(--grid-line); border-left: 0; }
+    .catalog-heading h1 { font-size: clamp(2.7rem, 13vw, 4rem); }
+    .catalog-controls { padding-inline: 20px; }
+    .catalog-controls__top span { display: none; }
+    .cards { grid-template-columns: 1fr; }
+  }
+</style>

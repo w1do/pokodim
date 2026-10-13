@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Страница не найдена — покодим.рф">
+  <div class="container not-found">
+    <div class="not-found__orbit" aria-hidden="true"><img src="/assets/ai-assistant.svg" alt="" /><span>LOST IN THE FLOW</span></div>
+    <p class="not-found__code">404</p>
+    <h1>Страница не найдена</h1>
+    <p class="not-found__text">
+      Такой страницы нет — возможно, материал переехал или адрес введён с ошибкой.
+    </p>
+    <nav class="not-found__links" aria-label="Навигация на 404">
+      <a href="/">Главная</a>
+      <a href="/materials/">Каталог материалов</a>
+    </nav>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: calc(100vh - 140px);
+    padding: clamp(70px, 9vw, 130px) 24px;
+    border-inline: 1px solid var(--grid-line);
+    background: #090d14c4;
+    text-align: center;
+  }
+
+  .not-found__orbit { position: absolute; z-index: 0; top: 50%; left: 50%; display: grid; width: min(62vw, 420px); aspect-ratio: 1; place-items: center; transform: translate(-50%, -50%); pointer-events: none; }
+  .not-found__orbit::before, .not-found__orbit::after { position: absolute; inset: 12%; border: 1px solid #53e0a126; border-radius: 50%; content: ''; box-shadow: 0 0 0 26px #53e0a10a, 0 0 0 54px #53e0a107; }
+  .not-found__orbit::after { inset: 24%; border-color: #b18aff24; transform: rotate(42deg) scaleX(.64); }
+  .not-found__orbit img { width: 38%; opacity: .12; filter: brightness(0) saturate(100%) invert(75%) sepia(28%) saturate(810%) hue-rotate(96deg); }
+  .not-found__orbit span { position: absolute; bottom: 19%; color: #96a79d; font-size: .56rem; font-weight: 800; letter-spacing: .2em; }
+
+  .not-found__code {
+    position: relative;
+    margin: 0 0 8px;
+    font-size: clamp(6rem, 15vw, 12rem);
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .not-found h1 {
+    position: relative;
+    margin: 0 0 14px;
+    font-size: clamp(1.65rem, 5vw, 2.35rem);
+    letter-spacing: -0.045em;
+  }
+
+  .not-found__text {
+    position: relative;
+    max-width: 460px;
+    margin: 0 auto 28px;
+    color: var(--text-muted);
+  }
+
+  .not-found__links {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+
+  .not-found__links a {
+    padding: 9px 15px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: #0d121a;
+    transition: border-color var(--transition), background var(--transition);
+  }
+
+  .not-found__links a:hover {
+    border-color: #34785d;
+    background: #13251e;
+  }
+
+  @media (max-width: 480px) {
+    .not-found { min-height: calc(100vh - 120px); padding-inline: 18px; border-inline: 0; }
+    .not-found__orbit { width: 92vw; }
+  }
+</style>

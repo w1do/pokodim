@@ -1,0 +1,129 @@
+---
+import type { Tool } from '../lib/catalog';
+import { LEVELS } from '../lib/catalog';
+
+interface Props {
+  tools: Tool[];
+}
+
+const { tools } = Astro.props;
+---
+
+<div class="filters">
+  <div class="filters__group" role="group" aria-label="Фильтр по инструменту">
+    <span class="filters__label">Инструмент</span>
+    {tools.map((tool) => (
+      <button type="button" class="chip" data-filter="tool" data-value={tool.slug}>{tool.name}</button>
+    ))}
+  </div>
+  <div class="filters__group" role="group" aria-label="Фильтр по уровню">
+    <span class="filters__label">Уровень</span>
+    {LEVELS.map((level) => (
+      <button type="button" class="chip" data-filter="level" data-value={level}>{level}</button>
+    ))}
+  </div>
+  <button type="button" class="reset" data-filter-reset>Сбросить</button>
+</div>
+
+<script>
+  import { applyCatalogFilters } from '../lib/catalog-client';
+
+  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+
+  const syncChips = () => {
+    const params = new URLSearchParams(window.location.search);
+    chips.forEach((chip) => {
+      const key = chip.dataset.filter as 'tool' | 'level';
+      chip.classList.toggle('is-active', params.get(key) === (chip.dataset.value ?? ''));
+    });
+  };
+
+  const setParam = (key: string, value: string) => {
+    const params = new URLSearchParams(window.location.search);
+    if (value) params.set(key, value);
+    else params.delete(key);
+    const query = params.toString();
+    window.history.replaceState(null, '', query ? `?${query}` : window.location.pathname);
+  };
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const key = chip.dataset.filter ?? '';
+      const value = chip.dataset.value ?? '';
+      const params = new URLSearchParams(window.location.search);
+      setParam(key, params.get(key) === value ? '' : value);
+      syncChips();
+      applyCatalogFilters();
+    });
+  });
+
+  document.querySelector<HTMLButtonElement>('[data-filter-reset]')?.addEventListener('click', () => {
+    setParam('tool', '');
+    setParam('level', '');
+    syncChips();
+    applyCatalogFilters();
+  });
+
+  syncChips();
+  applyCatalogFilters();
+</script>
+
+<style>
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .filters__group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .filters__label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    min-width: 76px;
+  }
+
+  .chip {
+    padding: 7px 14px;
+    border: 1px solid #303a49;
+    border-radius: 2px;
+    background: #0d121a;
+    color: var(--text);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition), color var(--transition);
+  }
+
+  .chip:hover {
+    border-color: var(--accent);
+  }
+
+  .chip.is-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-contrast);
+    font-weight: 650;
+  }
+
+  .reset {
+    align-self: flex-start;
+    padding: 5px 14px;
+    border: 1px solid #303a49;
+    border-radius: 2px;
+    background: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: border-color var(--transition), color var(--transition);
+  }
+
+  .reset:hover {
+    color: var(--text);
+    border-color: var(--text-muted);
+  }
+</style>

@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { fetchPublishedInstructions, mediaUrl } from '../../lib/cms';
+import type { Instruction } from '../../lib/cms';
+
+export async function getStaticPaths() {
+  const published = await fetchPublishedInstructions();
+
+  return published.map((instruction) => ({
+    params: { slug: instruction.slug },
+    props: { instruction },
+  }));
+}
+
+interface Props {
+  instruction: Instruction;
+}
+
+const { instruction } = Astro.props;
+const { values } = instruction;
+const cover = mediaUrl(values.cover);
+const memory = mediaUrl(values.memory_json);
+const seoTitle = instruction.seo_title || instruction.title;
+const seoDescription = instruction.seo_description || values.short_description || '';
+---
+
+<BaseLayout title={seoTitle} description={seoDescription}>
+  <div class="material-shell">
+    <div class="container material-shell__inner">
+      <article class="material">
+        <header class:list={['instruction-hero', !cover && 'instruction-hero--plain']}>
+          <div class="instruction-hero__copy">
+            <nav class="instruction-breadcrumbs" aria-label="Хлебные крошки">
+              <ol>
+                <li><a href="/instructions/">Инструкции</a></li>
+                {values.category && <li>{values.category}</li>}
+                <li aria-current="page">{instruction.title}</li>
+              </ol>
+            </nav>
+            <h1 class="instruction-hero__title">{instruction.title}</h1>
+            {values.short_description && <p class="instruction-hero__lead">{values.short_description}</p>}
+          </div>
+          {cover && (
+            <figure class="instruction-hero__frame">
+              <img class="instruction-hero__image" src={cover} alt="" />
+            </figure>
+          )}
+        </header>
+        <div class="material__body">
+          {values.full_description && <div set:html={values.full_description} />}
+          {values.mcp_example && (
+            <section class="instruction-mcp">
+              <h2>Как обратиться к MCP</h2>
+              <pre><code>{values.mcp_example}</code></pre>
+            </section>
+          )}
+          {memory && (
+            <p class="instruction-download">
+              <a class="instruction-button" href={memory} download>Скачать JSON</a>
+            </p>
+          )}
+        </div>
+        <a class="material__back" href="/instructions/">← Все инструкции</a>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  @import '../../styles/material-page.css';
+  @import '../../styles/instructions.css';
+
+  .instruction-mcp { margin-top: 50px; }
+  .instruction-mcp h2 { margin: 0 0 18px; padding: 0 0 13px 18px; border-bottom: 1px solid var(--grid-line); font-size: 1.7rem; line-height: 1.25; }
+  .instruction-mcp pre { margin: 0; padding: 16px 20px; overflow-x: auto; border: 1px solid var(--border); background: #111a23; }
+  .instruction-mcp code { font-family: ui-monospace, monospace; font-size: .95rem; white-space: pre-wrap; }
+  @media (max-width: 640px) {
+    .material__body { padding: 36px 16px; }
+    .material__back { margin: 0 16px 46px; }
+  }
+</style>
+
+<script>
+  import '../../scripts/instruction-art';
+</script>
