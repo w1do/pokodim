@@ -5,3 +5,6 @@ dist/
 .junie/mcp/
 
 .claude/mcp/
+
+.junie/
+.agents/
