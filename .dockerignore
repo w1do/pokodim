@@ -1,0 +1,12 @@
+node_modules
+dist
+.astro
+.env
+.env.*
+.git
+.claude
+.junie
+.agents
+openspec
+*.log
+.idea

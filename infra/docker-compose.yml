@@ -1,0 +1,23 @@
+services:
+  web:
+    build:
+      # Контекст сборки — корень репозитория (файл compose лежит в infra/).
+      context: ..
+      dockerfile: infra/Dockerfile
+      args:
+        BACKEND_API: ${BACKEND_API}
+        BACKEND_KEY: ${BACKEND_KEY}
+    expose:
+      - "80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
